@@ -5,6 +5,7 @@
 1: True
 0: False
 */
+
 void InitStack(SqStack *S){
     S->top = -1;
 }
@@ -48,8 +49,9 @@ void ShowStack(SqStack *S){
 }
 
 int main(){
-    SqStack S, *p;
-    p = &S;
+    //SqStack S, *p;
+    //p = &S;
+    SqStack *p = (SqStack*)malloc(sizeof(SqStack));
     InitStack(p);
     Push(p,1);
     Push(p,2);
