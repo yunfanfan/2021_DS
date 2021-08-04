@@ -18,4 +18,6 @@ int EnQueue(SqQueue *Q, int x);
 int DeQueue(SqQueue *Q);
 
 int GetHead(SqQueue *Q);
+
+int ShowQueue(SqQueue *Q);
 #endif
