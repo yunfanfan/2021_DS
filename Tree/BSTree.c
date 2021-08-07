@@ -75,38 +75,43 @@ void Traverse(BSTree T){
 }
 BSTree BST_Delete(BSTree T, int value){
     BSTNode *DeleteNode = BST_Search(T, value);
+    BSTNode *LeftOfDN = DeleteNode->left;
+    BSTNode *RightOfDN = DeleteNode->right;
     if (DeleteNode == NULL)
     {
         printf("无此节点，删除失败！\n");
     }
-    else if (DeleteNode->left==NULL && DeleteNode->right == NULL)
+    else if (LeftOfDN==NULL && RightOfDN == NULL)
     {
         printf("节点为叶节点，直接删除！\n");
         free(DeleteNode);
     }
-    else if (DeleteNode->left==NULL || DeleteNode->right == NULL)
+    else if (LeftOfDN==NULL || RightOfDN == NULL)
     {
-        if (DeleteNode->left != NULL)
+        if (LeftOfDN != NULL)
         {
             printf("被删除节点有左子树，让其替代被删除节点。\n");
-            DeleteNode->data = DeleteNode->left;
-            free(DeleteNode->left);
+            DeleteNode->data = LeftOfDN->data;
+            LeftOfDN = NULL;
+            free(LeftOfDN);
         }
         else
         {
             printf("被删除节点有右子树，让其替代被删除节点。\n");
-            DeleteNode = DeleteNode->right;
-            free(DeleteNode->right);
+            DeleteNode->data = RightOfDN->data;
+            RightOfDN = NULL;
+            free(RightOfDN);
         }
     }
     else
     {
         BSTNode *p;
-        for(p = DeleteNode->right; p->left; p->left);
+        for(p = RightOfDN; p->left; p->left);
         printf("%d 的直接后继为：%d\n", DeleteNode->data, p->data);
         DeleteNode->data = p->data;
         BST_Delete(p, p->data);
     }
+    return T;
 }
 void main(){
     BSTree T;
@@ -114,6 +119,6 @@ void main(){
     T = BST_Creat(T,value,8);
     Traverse(T);
     printf("\n");
-    BST_Delete(T, 45);
+    BST_Delete(T, 9);
     Traverse(T);
 }
