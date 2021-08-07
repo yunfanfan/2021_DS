@@ -49,8 +49,6 @@ void ShowStack(SqStack *S){
 }
 
 int main(){
-    //SqStack S, *p;
-    //p = &S;
     SqStack *p = (SqStack*)malloc(sizeof(SqStack));
     InitStack(p);
     Push(p,1);
