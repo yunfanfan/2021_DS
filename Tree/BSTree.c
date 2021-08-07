@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#define ValueNum 10
 //二叉排序树BST
 
 //树节点
@@ -24,6 +25,23 @@ BSTNode *BST_Search(BSTree T, int value){
         }
     }
     return T;
+}
+BSTNode *BST_SearchParent(BSTree T, int value){
+    BSTNode *parentTree = T;
+    while (T!=NULL && value!=T->data)
+    {
+        if (value < T->data)
+        {
+            parentTree = T;
+            T = T->left;
+        }
+        else
+        {
+            parentTree = T;
+            T = T->right;
+        }
+    }
+    return parentTree;
 }
 
 BSTree BST_Insert(BSTree T, int value){
@@ -74,7 +92,9 @@ void Traverse(BSTree T){
     }
 }
 BSTree BST_Delete(BSTree T, int value){
-    BSTNode *DeleteNode = BST_Search(T, value);
+    BSTNode *DeleteNode = (BSTNode*)malloc(sizeof(BSTNode));
+    DeleteNode = BST_Search(T, value);
+    BSTNode *ParentOfDN = BST_SearchParent(T, value);
     BSTNode *LeftOfDN = DeleteNode->left;
     BSTNode *RightOfDN = DeleteNode->right;
     if (DeleteNode == NULL)
@@ -84,6 +104,14 @@ BSTree BST_Delete(BSTree T, int value){
     else if (LeftOfDN==NULL && RightOfDN == NULL)
     {
         printf("节点为叶节点，直接删除！\n");
+        if (DeleteNode->data < ParentOfDN->data)
+        {
+            ParentOfDN->left = NULL;
+        }
+        else
+        {
+            ParentOfDN->right = NULL;
+        }
         free(DeleteNode);
     }
     else if (LeftOfDN==NULL || RightOfDN == NULL)
@@ -92,33 +120,45 @@ BSTree BST_Delete(BSTree T, int value){
         {
             printf("被删除节点有左子树，让其替代被删除节点。\n");
             DeleteNode->data = LeftOfDN->data;
+            DeleteNode->left = NULL;
             LeftOfDN = NULL;
-            free(LeftOfDN);
         }
         else
         {
             printf("被删除节点有右子树，让其替代被删除节点。\n");
             DeleteNode->data = RightOfDN->data;
+            DeleteNode->right = NULL;
             RightOfDN = NULL;
-            free(RightOfDN);
         }
     }
     else
     {
-        BSTNode *p;
-        for(p = RightOfDN; p->left; p->left);
-        printf("%d 的直接后继为：%d\n", DeleteNode->data, p->data);
+        BSTNode *p = RightOfDN;
+        BSTNode *q = DeleteNode;
+        while (p->left != NULL)
+        {
+            q = p;//q是p的父节点
+            p = p->left;
+        }
+        printf("%d 的直接后继为：%d，%d 是其父节点。\n", DeleteNode->data, p->data, q->data);
         DeleteNode->data = p->data;
-        BST_Delete(p, p->data);
+        q->left = p->right;
+        free(p);
+        p = NULL;
     }
     return T;
 }
 void main(){
     BSTree T;
-    int value[8] = {53, 17, 9, 45, 23, 78, 65, 87};
-    T = BST_Creat(T,value,8);
+    int value[ValueNum] = {53, 17, 9, 45, 23, 78, 65, 94, 81, 88};
+    T = BST_Creat(T,value, ValueNum);
     Traverse(T);
     printf("\n");
+    //printf("%d\n", BST_SearchParent(T, 9)->data);
     BST_Delete(T, 9);
+    Traverse(T);
+    BST_Delete(T, 45);
+    Traverse(T);
+    BST_Delete(T, 78);
     Traverse(T);
 }
